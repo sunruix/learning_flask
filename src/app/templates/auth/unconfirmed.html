@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block page_content %}
+<div class='page-header'>
+    <h1>Hello {{ current_user.username }}!</h1>
+</div>
+<div>
+    <h2>You have not confirmed your account yet.</h2>
+</div>
+<div>
+    <p>Before you can access this site you need to confirmed your account.Check your inbox, you should have received an email with confirmation link.</p>
+    <p>Need another confirmation email?
+        <a href="{{ url_for('auth.resend_confirmation') }}">Click here</a>
+    </p>
+</div>
+{% endblock %}
