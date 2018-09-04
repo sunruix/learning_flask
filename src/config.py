@@ -5,7 +5,7 @@ Created on 2018年4月18日
 '''
 import os
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+basedir = os.path.abspath(os.path.pardir)
 
 class Config():
     SECRET_KEY = 'hard to guess string'
@@ -35,11 +35,11 @@ class Config():
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///C:/Users/g/My Documents/LiClipse Workspace/learning_flask/db/dev.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + basedir + '/db/dev.db'
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///C:/Users/g/My Documents/LiClipse Workspace/learning_flask/db/test.db'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + basedir + '/db/test.db'
 
 class ProductionConfig(Config):
     pass
