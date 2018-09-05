@@ -29,7 +29,6 @@ from .forms import (EditProfileForm,
                     PostForm,
                     CommentForm)
 # from werkzeug.wsgi import responder
-# from builtins import int
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
