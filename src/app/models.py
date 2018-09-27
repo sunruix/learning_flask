@@ -201,6 +201,18 @@ class User(UserMixin, db.Model):
     @property
     def followed_posts(self):
         return Post.query.join(Follow, Follow.followed_id == Post.author_id).filter(Follow.follower_id == self.id)
+    
+    def to_json(self):
+        json_user = {
+            'url': url_for('api.get_user', id = self.id),
+            'username': self.username,
+            'member_since': self.member_since,
+            'last_seen': self.last_seen,
+            'posts_url': url_for('api.get_user_posts', id = self.id),
+            'followed_posts_url': url_for('api.get_user_followed_posts', id = self.id),
+            'post_count': self.posts.count()
+            }
+        return json_user
 
     @staticmethod
     def generate_fake(count=100):
@@ -274,6 +286,26 @@ class Post(db.Model):
             tags=allowed_tags,
             strip=True))
 
+    def to_json(self):
+        json_post = {
+            'url': url_for('api.get_post', id = self.id),
+            'body': self.body,
+            'body_html': self.body_html,
+            'timestamp': self.timestamp,
+            'author_url': url_for('api.get_user', id = self.author_id),
+            'comments_url': url_for('api.get_post_comments', id = self.id),
+            'comment_count': self.comment.count()
+        }
+        return json_post
+
+    @staticmethod
+    def from_json(json_post):
+        body = json_post.get('body')
+        if body is None or body == '':
+            raise ValidationError('post does not have a body')
+        return Post(body = body)
+        
+
     def __repr__(self):
         return "<Post '{}'>".format(self.title)
 db.event.listen(Post.body, 'set', Post.on_changed_body)
@@ -295,8 +327,27 @@ class Comment(db.Model):
                                                        tags = allowed_tags,
                                                        strip = True))
 
+    def to_json(self):
+        json_post = {
+            'url': url_for('api.get_comment', id = self.id),
+            'post_url': url_for('api.get_post', id = self.post_id),
+            'body': self.body,
+            'body_html': self.body_html,
+            'timestamp': self.timestamp,
+            'author_url': url_for('api.get_user', id = self.author_id),
+        }
+        return json_post
+
+    @staticmethod
+    def from_json(json_comment):
+        body = json_comment.get('body')
+        if body is None or body == '':
+            raise ValidationError('comment does not have a body')
+        return Comment(body = body)
+
     def __repr__(self):
         return "<Comment '{}'>".format(self.body[:15])
+
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 
 class Tag(db.Model):
